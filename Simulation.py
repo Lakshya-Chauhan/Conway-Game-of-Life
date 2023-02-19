@@ -1,8 +1,11 @@
 import pygame
 from os import system
 
-stopped = 0
+stopped = False
+frameRate = 600
+size = 15
 
+BG    = (10,10,10)
 BLUE  = (131, 193, 224)
 PEACH = (224, 196, 148)
 GREEN = (146, 219, 148)
@@ -65,6 +68,7 @@ def cls():
 
 def main():
     global stopped
+    global frameRate
 
     pygame.init()
     screen = pygame.display.set_mode((1080,720))
@@ -77,8 +81,10 @@ def main():
     running = True
     clock = pygame.time.Clock()
 
+    screen.fill(BG)
+
     while running:
-        clock.tick(20)
+        clock.tick(frameRate)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -87,31 +93,40 @@ def main():
                 if event.key == pygame.K_SPACE:
                     stopped = not(stopped)
 
-            if pygame.mouse.get_pressed()[0]:
+            if pygame.mouse.get_pressed()[0]: # left mouse click
                 mpos = pygame.mouse.get_pos()
-                pos = (mpos[0]//10,mpos[1]//10)
+                pos = (mpos[0]//size, mpos[1]//size)
 
-                if Gen1[pos[0]][pos[1]] == 0:
-                    Gen1[pos[0]][pos[1]] = 1
+                Gen1[pos[0]][pos[1]] = 1 if not(Gen1[pos[0]][pos[1]]) else 1    # turn dead cell live on left click
+                frameRate = 600
 
-        screen.fill(BLACK)
+            elif pygame.mouse.get_pressed()[2]: # right mouse click
+                mpos = pygame.mouse.get_pos()
+                pos = (mpos[0]//size, mpos[1]//size)
+
+                Gen1[pos[0]][pos[1]] = 0 if Gen1[pos[0]][pos[1]] else 0         # turn live cell dead on right click
+                frameRate = 600
+
+            else:
+                frameRate = 30
+
         for x in range(len(Gen1)):
             for y in range(len(Gen1[x])):
                 if Gen1[x][y]:
                     if Gen2[x][y]:
-                        if Gen3[x][y]:
+                        if Gen3[x][y]:  # cell survives for next 3 generations
                             colour = BLUE 
-
-                        else:
+                        else:           # cell survives for next 2 generations 
                             colour = PEACH
 
-                    elif Gen3[x][y]:
+                    elif Gen3[x][y]: # cell survives 1st generation, then dies, and takes birth in the 3rd generation
                         colour = GREEN
-
-                    else:
+                    else: # cell surives only 1st generation
                         colour = RED
+                else: # cell is dead
+                    colour = BLACK
 
-                    pygame.draw.rect(screen, colour, pygame.Rect(x*10,y*10,10,10))
+                pygame.draw.rect(screen, colour, pygame.Rect(x * size, y * size, size - 1, size - 1))
 
         if stopped:
             if next_gen(Gen1) != Gen2:
