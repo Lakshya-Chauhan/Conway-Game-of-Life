@@ -3,6 +3,7 @@ import random
 from os import system
 from msvcrt import getch
 stopped = -1
+frameRate = 600
 def next_gen(old_gen):
     new_gen = []
     neighbours = 0
@@ -53,13 +54,13 @@ pygame.display.set_caption("")
 #pygame.display.set_icon(icon)
 cls()
 
-Gen = construct_gen(192,108)
+Gen = construct_gen(1920//15,1080//15)
 Gen2 = next_gen(Gen)
 Gen3 = next_gen(Gen2)
 running = True
 clock = pygame.time.Clock()
 while running == True:
-    clock.tick(20)
+    clock.tick(frameRate)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -68,11 +69,16 @@ while running == True:
                 stopped *= -1
         if pygame.mouse.get_pressed()[0] == True:
             mpos = pygame.mouse.get_pos()
-            mpos = (mpos[0]//10,mpos[1]//10)
-            if Gen[mpos[0]][mpos[1]] == 1:
-                Gen[mpos[0]][mpos[1]] = 0
-            else:
-                Gen[mpos[0]][mpos[1]] = 1
+            mpos = (mpos[0]//15,mpos[1]//15)
+            Gen[mpos[0]][mpos[1]] = 1
+            frameRate = 600
+        elif pygame.mouse.get_pressed()[2] == True:
+            mpos = pygame.mouse.get_pos()
+            mpos = (mpos[0]//15,mpos[1]//15)
+            Gen[mpos[0]][mpos[1]] = 0
+            frameRate = 600
+        else:
+            frameRate = 20
     #Code Here
     screen.fill((0,0,0))
     for x in range(len(Gen)):
@@ -88,7 +94,8 @@ while running == True:
                 else:
                     colour = (235,147,147)
 
-                pygame.draw.rect(screen, colour, pygame.Rect(x*10,y*10,10,10))
+                pygame.draw.rect(screen, colour, pygame.Rect(x*15,y*15,15,15))
+            pygame.draw.rect(screen, (15,15,15),pygame.Rect(x*15,y*15,15,15),1)
     if stopped == 1:
         if next_gen(Gen) != Gen2:
             Gen = next_gen(Gen)
