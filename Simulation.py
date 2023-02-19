@@ -139,7 +139,6 @@ def main():
                 Gen3 = next_gen(Gen3)
 
         pygame.display.update()
-#bruh resolved the issues to merge pull request
 
         
         
