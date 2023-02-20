@@ -59,7 +59,7 @@ def construct_gen(rows,column):
     gen = []
     for i in range(rows):
         gen.append([])
-        for j in range(column):
+        for _ in range(column):
             gen[i].append(0)
     return gen
 
@@ -108,7 +108,7 @@ def main():
                 frameRate = 600
 
             else:
-                frameRate = 30
+                frameRate = 20
 
         for x in range(len(Gen1)):
             for y in range(len(Gen1[x])):
